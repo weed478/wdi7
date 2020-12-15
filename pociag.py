@@ -38,6 +38,8 @@ class Pociag:
 
         :returns: Removed element value
         """
+        if self.next is None:
+            return None
         v = self.next.val
         self.next = self.next.next
         return v
