@@ -30,6 +30,17 @@ class Pociag:
             q = q.insert_after(i)
         return q
 
+    def insert_pociag_after(self, pociag):
+        """
+        :type pociag: Pociag
+        :return: Last element inserted
+        :rtype: Pociag
+        """
+        last = pociag.last()
+        last.next = self.next
+        self.next = pociag
+        return last
+
     # Deletion
 
     def remove_after(self):
