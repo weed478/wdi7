@@ -12,12 +12,10 @@ class Gar_Set2:
         return None
 
     def get(self, index):
-        target = self.start
-        while target is not None:
-            if target.index == index:
-                return target.val
-            target = target.next
-        return None
+        target = self.get(index)
+        if target is None:
+            return None
+        return target.val
 
     def set(self, index, num):
         target = self.__get(index)
@@ -38,7 +36,7 @@ class Gar_Set2:
         prev = None
         while target is not None:
             if target.index == index:
-                if target == self.last and target == self.start:
+                if self.last == self.start:
                     self.start = None
                     self.last = None
                 elif target == self.last:

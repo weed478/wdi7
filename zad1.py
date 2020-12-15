@@ -31,7 +31,7 @@ class Gar_Set:
         prev = None
         while target is not None:
             if target.val == num:
-                if target == self.last and target == self.start:
+                if self.last == self.start:
                     self.start = None
                     self.last = None
                 elif target == self.last:
