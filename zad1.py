@@ -5,38 +5,29 @@ class Gar_Set:
     def contains(self, num):
         target = self.start
 
-        while target is not None:
-            if target.val > num:
-                break
-            if target.val == num:
-                return True
+        while target is not None and target.val < num:
             target = target.next
+
+        if target.val == num:
+            return True
         return False
 
     def add(self, num):
-        target = self.start
         prev = None
+        target = self.start
+        while target is not None and target.val < num:
+            prev = target
+            target = target.next
+
+        if target is not None and target.val == num:
+            return False
 
         node = self.Node(num)
 
-        if target is None:
+        if prev is None:
+            node.next = target
             self.start = node
             return True
-
-        while target is not None:
-            if target.val > num:
-                node.next = target
-                if prev is None:
-                    self.start = node
-                else:
-                    prev.next = node
-                return True
-
-            if target.val == num:
-                return False
-
-            prev = target
-            target = target.next
 
         node.next = target
         prev.next = node
@@ -46,32 +37,31 @@ class Gar_Set:
         target = self.start
         prev = None
 
-        while target is not None:
-            if target.val > num:
-                break
-            if target.val == num:
-                if prev is None:
-                    self.start = target.next
-                else:
-                    prev.next = target.next
-                # delete target
-                return True
-
+        while target is not None and target.val < num:
             prev = target
             target = target.next
+
+        if target is not None and target.val == num:
+            if prev is None:
+                self.start = target.next
+            else:
+                prev.next = target.next
+            # delete target
+            return True
+
         return False
 
-    def show(self):
+    def __str__(self):
         target = self.start
-        print('[', end='')
+        text = "["
         if target is None:
-            print(']')
-            return
+            text += "]"
+            return text
         while target is not None:
-            print(target.val, sep='', end='')
+            text += str(target.val) + ", "
             target = target.next
-            print(', ', sep='', end='')
-        print('\b\b]')
+        text += "\b\b]"
+        return text
 
     class Node:
         def __init__(self, val):
@@ -79,23 +69,24 @@ class Gar_Set:
             self.next = None
 
 
-pep = Gar_Set()
-print(pep.add(4))
-print(pep.add(7))
-print(pep.add(6))
-pep.show()
-print(pep.add(5))
-pep.show()
-print(pep.contains(3))
-print(pep.contains(5))
-print(pep.add(4))
-pep.show()
-print(pep.remove(5))
-pep.show()
-print(pep.remove(4))
-pep.show()
-print(pep.remove(7))
-pep.show()
-print(pep.remove(6))
-print(pep.remove(6))
-pep.show()
+if __name__ == "__main__":
+    pep = Gar_Set()
+    print(pep.add(4))
+    print(pep.add(7))
+    print(pep.add(6))
+    print(pep)
+    print(pep.add(5))
+    print(pep)
+    print(pep.contains(3))
+    print(pep.contains(5))
+    print(pep.add(4))
+    print(pep)
+    print(pep.remove(5))
+    print(pep)
+    print(pep.remove(4))
+    print(pep)
+    print(pep.remove(7))
+    print(pep)
+    print(pep.remove(6))
+    print(pep.remove(6))
+    print(pep)
