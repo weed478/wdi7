@@ -64,12 +64,14 @@ class Gar_Set:
     def show(self):
         target = self.start
         print('[', end='')
+        if target is None:
+            print(']')
+            return
         while target is not None:
             print(target.val, sep='', end='')
             target = target.next
-            if target is not None:
-                print(', ', sep='', end='')
-        print(']')
+            print(', ', sep='', end='')
+        print('\b\b]')
 
     class Node:
         def __init__(self, val):
