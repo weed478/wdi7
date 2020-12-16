@@ -53,15 +53,17 @@ class Gar_Set2:
             target = target.next
         return False
 
-    def show(self):
+    def __str__(self):
         target = self.start
-        print('[', end='')
+        text = "["
+        if target is None:
+            text += "]"
+            return text
         while target is not None:
-            print('(',target.index, ',', target.val, ')', sep='', end='')
+            text += str(target.val) + ", "
             target = target.next
-            if target is not None:
-                print(', ', sep='', end='')
-        print(']')
+        text += "\b\b]"
+        return text
 
     class Node:
         def __init__(self, index, val):
@@ -75,12 +77,12 @@ print(pep.set(3, 6))
 print(pep.set(4, 9))
 print(pep.set(1, 0))
 print(pep.set(91, 4))
-pep.show()
+print(pep)
 print(pep.remove(5))
-pep.show()
+print(pep)
 print(pep.remove(4))
-pep.show()
+print(pep)
 print(pep.remove(7))
-pep.show()
+print(pep)
 print(pep.remove(1))
-pep.show()
+print(pep)
