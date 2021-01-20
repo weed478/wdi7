@@ -50,47 +50,29 @@ def gcd(a, b):
 
 
 def lcm(a, b):
-    return abs(a * b) // gcd(a, b)
+    return abs(a) // gcd(a, b) * abs(b)
 
 
 assert lcm(60, 52) == 780
 
 
-def gcd_ext(a, b):
-    s = 0
-    old_s = 1
-
-    t = 1
-    old_t = 0
-
-    r = b
-    old_r = a
-
-    while r != 0:
-        quotient = old_r // r
-        old_r, r = r, old_r - quotient * r
-        old_s, s = s, old_s - quotient * s
-        old_t, t = t, old_t - quotient * t
-
-    return (old_s, old_t), old_r, (t, s)
-
-
-assert gcd_ext(240, 46)[1] == 2
-assert gcd_ext(240, 46)[0] == (-9, 47)
-
-
-def egcd(a, b):
-    x,y, u,v = 0,1, 1,0
-    while a != 0:
-        q, r = b//a, b%a
-        m, n = x-u*q, y-v*q
-        b,a, x,y, u,v = a,r, u,v, m,n
-    gcd = b
-    return gcd, x, y
-
-
 def mod_inv(a, n):
-    return egcd(a, n)[1]
+    t = 0
+    new_t = 1
+    r = n
+    new_r = a
+
+    while new_r != 0:
+        q = r // new_r
+        t, new_t = new_t, t - q * new_t
+        r, new_r = new_r, r - q * new_r
+
+    if r > 1:
+        return None
+    if t < 0:
+        t = t + n
+
+    return t
 
 
 def bit_len(a):
@@ -101,47 +83,73 @@ def bit_len(a):
     return n
 
 
+def carmichael(p, q):
+    return lcm(p - 1, q - 1)
+
+
+def phi(p, q):
+    return (p - 1) * (q - 1)
+
+
 def rsa_gen(bits):
-    p = gen_prime(randint(2 ** (bits//2 - 1), 2 ** (bits//2 + 1)))
-    q = gen_prime(randint(2 ** (bits//2 - 1), 2 ** (bits//2 + 1)))
+    bit_offset = randint(0, bits // 16)
+    p = gen_prime(randint(2 ** (bits//2 - bit_offset), 2 ** (bits//2 - bit_offset + 1)))
+    q = gen_prime(randint(2 ** (bits//2 + bit_offset), 2 ** (bits//2 + bit_offset + 1)))
+    print('p =', p)
+    print('q =', q)
+
     n = p * q
-    print('bits', bit_len(n))
+    print(bit_len(n), 'bits')
 
-    carmichael = lcm(p - 1, q - 1)
-    print('lambda', carmichael)
+    totient = carmichael(p, q)
+    # totient = phi(p, q)
+    print('totient =', totient)
 
-    e = carmichael - 2  # why -2?
-    while e > 1 and gcd(e, carmichael) != 1:
-        e -= 1
+    e = 2
+    while gcd(e, totient) != 1:
+        e += 1
 
-    assert 1 < e < carmichael
-    assert gcd(e, carmichael) == 1
+    assert 1 < e < totient
+    assert gcd(e, totient) == 1
 
-    print('e', e)
+    print('e =', e)
 
-    d = mod_inv(e, carmichael)
-    print('d', d)
-    assert (e * d) % carmichael == 1
+    d = mod_inv(e, totient)
+    print('d =', d)
+    assert (e * d) % totient == 1
 
     return (n, e), (n, d)
 
 
-def rsa_encrypt(m, key):
+def rsa(m, key):
     return pow(m, key[1], key[0])
 
 
-def rsa_decrypt(c, key):
-    return pow(c, key[1], key[0])
+def str2int(text):
+    m = 0
+    for c in reversed(text):
+        m <<= 8
+        m += ord(c)
+    return m
+
+
+def int2str(m):
+    text = ''
+    while m > 0:
+        m, c = divmod(m, 256)
+        text += chr(c)
+    return text
 
 
 pub, priv = rsa_gen(256)
-print(pub, priv)
+print('pub =', pub)
+print('priv =', priv)
 
-m = 65
+m = 'Odpowiedzi do egzaminu'
 print('m =', m)
 
-c = rsa_encrypt(m, pub)
+c = rsa(str2int(m), pub)
 print('c =', c)
 
-m = rsa_decrypt(c, priv)
+m = int2str(rsa(c, priv))
 print('m =', m)
